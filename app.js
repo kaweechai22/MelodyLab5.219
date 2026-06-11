@@ -1,4 +1,242 @@
 
+const soundTopicModes = new Set(["soundReflection","soundRefraction","soundDiffraction","soundInterference","resonanceAirHarmonics","shockWave","soundIntensity","soundIntensityLevel","soundLevelHearing","noisePollution","applicationsSound"]);
+
+function gNum(id, fb){ const e=$(id); return e ? Number(e.value || fb) : fb; }
+function lab(id, t){ if($(id)) $(id).textContent = t; }
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+function arr(ctx,x1,y1,x2,y2,col="#22d3ee",lw=3){
+  ctx.save();
+  ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=lw;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1), h=13;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-h*Math.cos(a-Math.PI/6), y2-h*Math.sin(a-Math.PI/6));
+  ctx.lineTo(x2-h*Math.cos(a+Math.PI/6), y2-h*Math.sin(a+Math.PI/6));
+  ctx.closePath(); ctx.fill();
+  ctx.restore();
+}
+function baseTopic(ctx,w,h,title){
+  ctx.clearRect(0,0,w,h);
+  const bg=ctx.createLinearGradient(0,0,w,h);
+  bg.addColorStop(0,"#020817"); bg.addColorStop(1,"#06152e");
+  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle="rgba(148,163,184,.10)"; ctx.lineWidth=1;
+  for(let x=0;x<w;x+=78){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+  const panel={x:44,y:76,w:w-88,h:h-126};
+  ctx.fillStyle="rgba(4,18,42,.74)";
+  ctx.strokeStyle="rgba(88,166,255,.32)";
+  ctx.lineWidth=1.6;
+  roundRect(ctx,panel.x,panel.y,panel.w,panel.h,18);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle="#e8f5ff";
+  ctx.font="bold 20px Sarabun, system-ui, sans-serif";
+  ctx.textAlign="left";
+  ctx.fillText(title,24,34);
+  return panel;
+}
+function glowDot(ctx,x,y,r=7,col="#ff4d6d"){
+  ctx.save();
+  const g=ctx.createRadialGradient(x,y,2,x,y,r*3);
+  g.addColorStop(0,col);
+  g.addColorStop(1,"rgba(0,0,0,0)");
+  ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*3,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle="rgba(255,255,255,.92)"; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(x,y,r+3,0,Math.PI*2); ctx.stroke();
+  ctx.restore();
+}
+function movingDotOnLine(ctx,x1,y1,x2,y2,phase,col="#ff4d6d"){
+  const u=(phase%1+1)%1;
+  glowDot(ctx,x1+(x2-x1)*u,y1+(y2-y1)*u,6,col);
+}
+function waveArcs(ctx,x,y,count,spacing,col,start=-0.9,end=0.9,phase=0){
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.2;
+  for(let i=0;i<count;i++){
+    const r=(i*spacing + (phase%spacing)+spacing)% (count*spacing);
+    if(r<18) continue;
+    ctx.globalAlpha=clamp(0.92-r/(count*spacing),0.15,0.9);
+    ctx.beginPath(); ctx.arc(x,y,r,start,end); ctx.stroke();
+  }
+  ctx.restore();
+}
+function waveBars(ctx,x1,y1,x2,y2,count,col,phase=0){
+  const dx=x2-x1, dy=y2-y1, len=Math.hypot(dx,dy)||1;
+  const nx=-dy/len, ny=dx/len;
+  ctx.save(); ctx.strokeStyle=col; ctx.lineWidth=2.2;
+  for(let i=0;i<count;i++){
+    const u=(i/count + phase)%1;
+    const x=x1+dx*u, y=y1+dy*u;
+    const a=40*(1-u*.25);
+    ctx.globalAlpha=clamp(.8-i*.04,.2,.85);
+    ctx.beginPath(); ctx.moveTo(x-nx*a,y-ny*a); ctx.lineTo(x+nx*a,y+ny*a); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawSoundTopicPlaceholder(ctx,c,p,w,h,mode){
+  const time=vizState.t*0.035*(p.speed||1);
+  let panel, cx, cy;
+
+  if(mode==="soundReflection"){
+    const angle=gNum("vizAngle",35), f=gNum("vizFreq",800);
+    lab("vizAngleLabel",angle.toFixed(0)+"°"); lab("vizFreqLabel",f.toFixed(0)+" Hz"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Sound Reflection (การสะท้อนของเสียง)");
+    const wallX=panel.x+panel.w-210, hitY=panel.y+panel.h*.52, srcX=panel.x+150;
+    const theta=angle*Math.PI/180, L=wallX-srcX-70, dy=Math.tan(theta)*L;
+    const inX=srcX+70, inY=hitY-dy;
+    const outX=srcX+70, outY=hitY+dy;
+    drawSpeaker(ctx,srcX,inY,0.86);
+    waveArcs(ctx,srcX,inY,8,28,"rgba(34,211,238,.72)",-0.85,0.85,time*18);
+    ctx.strokeStyle="rgba(255,255,255,.68)"; ctx.lineWidth=7;
+    ctx.beginPath(); ctx.moveTo(wallX,panel.y+40); ctx.lineTo(wallX,panel.y+panel.h-40); ctx.stroke();
+    ctx.strokeStyle="rgba(255,255,255,.72)"; ctx.setLineDash([8,7]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(wallX-150,hitY); ctx.lineTo(wallX+120,hitY); ctx.stroke(); ctx.setLineDash([]);
+    arr(ctx,inX,inY,wallX,hitY,"#22d3ee",4);
+    arr(ctx,wallX,hitY,outX,outY,"#ff5cab",4);
+    waveBars(ctx,inX,inY,wallX,hitY,8,"rgba(34,211,238,.50)",(time*.08)%1);
+    waveBars(ctx,wallX,hitY,outX,outY,8,"rgba(255,92,171,.52)",(time*.08)%1);
+    if(vizState.running){ movingDotOnLine(ctx,inX,inY,wallX,hitY,(time*.08)%1,"#22d3ee"); movingDotOnLine(ctx,wallX,hitY,outX,outY,(time*.08)%1,"#ff5cab"); }
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="center";
+    ctx.fillText("θᵢ = θᵣ",wallX-100,hitY+60);
+    ctx.fillText("เส้นฉาก",wallX+78,hitY-12);
+    ctx.fillStyle="#22d3ee"; ctx.fillText("คลื่นตกกระทบ",inX+115,inY-22);
+    ctx.fillStyle="#ff5cab"; ctx.fillText("คลื่นสะท้อนออกจากผนัง",outX+160,outY+28);
+
+  } else if(mode==="soundRefraction"){
+    const dT=gNum("vizTempDiff",15), ang=gNum("vizAngle",25);
+    lab("vizTempDiffLabel",dT.toFixed(0)+" °C"); lab("vizAngleLabel",ang.toFixed(0)+"°"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Sound Refraction (การหักเหของเสียง)");
+    cx=w/2; cy=panel.y+panel.h*.50;
+    ctx.fillStyle="rgba(255,120,40,.08)"; ctx.fillRect(panel.x+18,panel.y+22,panel.w-36,panel.h/2-22);
+    ctx.fillStyle="rgba(34,211,238,.09)"; ctx.fillRect(panel.x+18,cy,panel.w-36,panel.h/2-22);
+    ctx.strokeStyle="rgba(255,255,255,.45)"; ctx.setLineDash([8,8]); ctx.lineWidth=2;
+    ctx.beginPath(); ctx.moveTo(panel.x+30,cy); ctx.lineTo(panel.x+panel.w-30,cy); ctx.stroke(); ctx.setLineDash([]);
+    const sx=panel.x+120, sy=cy-120; drawSpeaker(ctx,sx,sy,0.85);
+    const bend=40+dT*3, endX=cx+220, endY=cy+bend;
+    ctx.strokeStyle="#ff5cab"; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(sx+58,sy+15); ctx.quadraticCurveTo(cx-70,cy-20,cx,cy); ctx.quadraticCurveTo(cx+95,cy+bend*.35,endX,endY); ctx.stroke();
+    arr(ctx,endX-55,endY-28,endX,endY,"#ff5cab",4);
+    if(vizState.running) movingDotOnLine(ctx,sx+58,sy+15,endX,endY,(time*.06)%1,"#ff5cab");
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="left";
+    ctx.fillText("อากาศอุ่น: v₁ มากกว่า",cx+145,cy-96);
+    ctx.fillText("อากาศเย็น: v₂ น้อยกว่า",cx+145,cy+95);
+    ctx.fillText("เสียงเบนเข้าหาบริเวณที่ช้ากว่า",panel.x+62,panel.y+panel.h-28);
+
+  } else if(mode==="soundDiffraction"){
+    const slit=gNum("vizSlit",1), f=gNum("vizFreq",600);
+    lab("vizSlitLabel",slit.toFixed(1)+" λ"); lab("vizFreqLabel",f.toFixed(0)+" Hz"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Sound Diffraction (การเลี้ยวเบนของเสียง)");
+    cx=w/2; cy=panel.y+panel.h*.52;
+    const bx=cx-70, gap=clamp(75*slit,35,190);
+    drawSpeaker(ctx,panel.x+115,cy,0.85);
+    for(let i=0;i<8;i++){ const x=panel.x+165+i*36+(time*18%36); ctx.strokeStyle=`rgba(34,211,238,${.75-i*.06})`; ctx.lineWidth=2.2; ctx.beginPath(); ctx.moveTo(x,cy-115); ctx.lineTo(x,cy+115); ctx.stroke(); }
+    ctx.strokeStyle="rgba(255,255,255,.62)"; ctx.lineWidth=8;
+    ctx.beginPath(); ctx.moveTo(bx,panel.y+45); ctx.lineTo(bx,cy-gap/2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx,cy+gap/2); ctx.lineTo(bx,panel.y+panel.h-45); ctx.stroke();
+    const spread=slit<1.05?1.25:slit<1.8?0.95:0.65;
+    waveArcs(ctx,bx,cy,9,32,"rgba(255,92,171,.88)",-spread,spread,time*18);
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="center";
+    ctx.fillText("a ใกล้ λ → เลี้ยวเบนเด่น",cx+145,panel.y+48);
+
+  } else if(mode==="soundInterference"){
+    const sep=gNum("vizSeparation",.8), ph=gNum("vizPhaseDiff",0);
+    lab("vizSeparationLabel",sep.toFixed(2)+" m"); lab("vizPhaseDiffLabel",ph.toFixed(0)+"°"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Sound Interference (การแทรกสอดของเสียง)");
+    cx=w/2; cy=panel.y+panel.h*.52;
+    const sx=panel.x+150, s1=cy-78*sep, s2=cy+78*sep;
+    drawSpeaker(ctx,sx,s1,0.7); drawSpeaker(ctx,sx,s2,0.7);
+    waveArcs(ctx,sx,s1,11,31,"rgba(34,211,238,.78)",-1.2,1.2,time*20);
+    waveArcs(ctx,sx,s2,11,31,"rgba(255,92,171,.72)",-1.2,1.2,time*20 + ph/12);
+    // Constructive/destructive sample points
+    for(let i=0;i<7;i++){
+      const x=cx+20+i*50, y=cy + Math.sin(i*1.7+ph*Math.PI/180)*95;
+      glowDot(ctx,x,y,4,i%2?"#ff5cab":"#22d3ee");
+    }
+    ctx.fillStyle="#22d3ee"; ctx.font="bold 15px Sarabun"; ctx.textAlign="left";
+    ctx.fillText("เสริมกัน: Δr = mλ เมื่อ Δφ = 0",cx+110,cy-92);
+    ctx.fillStyle="#ff5cab"; ctx.fillText("หักล้าง: Δr = (m+1/2)λ",cx+110,cy-62);
+
+  } else if(mode==="resonanceAirHarmonics"){
+    const n=Math.round(gNum("vizTubeMode",1)), L=gNum("vizLength",1);
+    lab("vizTubeModeLabel",String(n)); lab("vizLengthLabel",L.toFixed(2)+" m"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Resonance in Air Column: Harmonic Modes");
+    const left=panel.x+120, right=panel.x+panel.w-110, width=right-left, baseY=panel.y+panel.h*.52;
+    ctx.strokeStyle="rgba(255,255,255,.45)"; ctx.lineWidth=3; roundRect(ctx,left,baseY-42,width,84,14); ctx.stroke();
+    for(let k=1;k<=n;k++){
+      const pts=[];
+      for(let x=left;x<=right;x+=4){
+        const u=(x-left)/width*Math.PI*k;
+        pts.push([x,baseY-Math.sin(u)*34*Math.sin(time+k)]);
+      }
+      drawWaveLine(ctx,pts,k%2?"#22d3ee":"#a78bfa",2.8);
+    }
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="center"; ctx.fillText(`โหมด n = ${n}`,w/2,panel.y+48);
+    ctx.fillText("ปลายเปิด: ปฏิบัพการกระจัด    ปลายปิด: ปมการกระจัด",w/2,panel.y+panel.h-32);
+
+  } else if(mode==="shockWave"){
+    const M=gNum("vizMach",1.5), v=gNum("vizSpeed",343);
+    lab("vizMachLabel",M.toFixed(2)); lab("vizSpeedLabel",v.toFixed(0)+" m/s"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Shock Wave / Sonic Boom");
+    cx=w/2; cy=panel.y+panel.h*.52;
+    const theta=Math.asin(1/Math.max(M,1.01)), sx=cx+100;
+    arr(ctx,panel.x+110,cy,sx,cy,"#22d3ee",3);
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 34px Sarabun"; ctx.textAlign="center"; ctx.fillText("✈️",sx,cy+10);
+    ctx.strokeStyle="#c084fc"; ctx.lineWidth=4;
+    ctx.beginPath(); ctx.moveTo(sx,cy); ctx.lineTo(sx-360,cy-Math.tan(theta)*360); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sx,cy); ctx.lineTo(sx-360,cy+Math.tan(theta)*360); ctx.stroke();
+    waveArcs(ctx,sx,cy,9,30,"rgba(34,211,238,.42)",2.55,3.75,time*18);
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="left"; ctx.fillText("sin θ = 1/M",sx-65,cy+72);
+
+  } else if(mode==="soundIntensity" || mode==="soundIntensityLevel"){
+    const r=gNum("vizDistance",5), P=gNum("vizPower",1);
+    const logI=gNum("vizIntensity",-5);
+    const I = mode==="soundIntensityLevel" ? Math.pow(10,logI) : P/(4*Math.PI*r*r);
+    const beta=10*Math.log10(I/1e-12);
+    lab("vizDistanceLabel",r.toFixed(1)+" m"); lab("vizPowerLabel",P.toFixed(1)+" W"); lab("vizIntensityLabel",`1.0×10^${logI.toFixed(1)} W/m²`);
+    panel=baseTopic(ctx,w,h,mode==="soundIntensity"?"Sound Intensity (ความเข้มเสียง)":"Sound Intensity Level (ระดับความเข้มเสียง)");
+    cy=panel.y+panel.h*.48; const sx=panel.x+130;
+    drawSpeaker(ctx,sx,cy,0.9); waveArcs(ctx,sx,cy,9,42,"rgba(34,211,238,.65)",-0.9,0.9,time*18);
+    const mx=sx+clamp(r*38,80,panel.w-180);
+    glowDot(ctx,mx,cy,7,"#ff5cab");
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 18px Sarabun"; ctx.textAlign="center";
+    ctx.fillText(mode==="soundIntensity" ? "I = P / 4πr²  และ  I ∝ 1/r²" : `β = 10 log₁₀(I/I₀) ≈ ${beta.toFixed(0)} dB`, w/2, panel.y+panel.h-44);
+    // dB meter
+    const barX=panel.x+190, barY=panel.y+panel.h-80, barW=panel.w-380;
+    const grad=ctx.createLinearGradient(barX,0,barX+barW,0); grad.addColorStop(0,"#22d3ee"); grad.addColorStop(.5,"#fbbf24"); grad.addColorStop(1,"#ff5cab");
+    ctx.fillStyle=grad; roundRect(ctx,barX,barY,barW,12,6); ctx.fill();
+    const px=barX+clamp(beta,0,140)/140*barW; glowDot(ctx,px,barY+6,5,"#fff");
+
+  } else if(mode==="soundLevelHearing"){
+    const f=gNum("vizFreq",1000), level=gNum("vizLevel",60);
+    lab("vizFreqLabel",f>=1000?(f/1000).toFixed(1)+" kHz":f.toFixed(0)+" Hz"); lab("vizLevelLabel",level.toFixed(0)+" dB"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Sound Level, Frequency and Hearing");
+    const x0=panel.x+90,y0=panel.y+panel.h-70,x1=panel.x+panel.w-70,y1=panel.y+65;
+    ctx.strokeStyle="#22d3ee"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x0,y1); ctx.lineTo(x1,y1); ctx.stroke();
+    ctx.fillStyle="rgba(34,211,238,.16)";
+    ctx.beginPath(); ctx.moveTo(x0+55,y0-20); ctx.bezierCurveTo(x0+120,y1+75,x1-160,y1+55,x1-65,y0-60); ctx.lineTo(x1-65,y1+35); ctx.bezierCurveTo(x1-180,y1+20,x0+150,y1+20,x0+55,y1+60); ctx.closePath(); ctx.fill();
+    const lx=(Math.log10(clamp(f,20,20000))-Math.log10(20))/(Math.log10(20000)-Math.log10(20));
+    const px=x0+lx*(x1-x0), py=y0-(level/130)*(y0-y1);
+    glowDot(ctx,px,py,7,"#ff5cab");
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 16px Sarabun"; ctx.textAlign="center"; ctx.fillText("20 Hz – 20 kHz; หูไวมากประมาณ 2–5 kHz",w/2,panel.y+42);
+
+  } else if(mode==="noisePollution"){
+    const source=gNum("vizSourceLevel",85), prot=gNum("vizProtection",15), after=clamp(source-prot,0,140);
+    lab("vizSourceLevelLabel",source.toFixed(0)+" dB"); lab("vizProtectionLabel",prot.toFixed(0)+" dB"); lab("vizTimeLabel",(p.speed||1).toFixed(1)+"×");
+    panel=baseTopic(ctx,w,h,"Noise Pollution and Protection");
+    const baseY=panel.y+panel.h-80, left=panel.x+90, right=panel.x+panel.w-90;
+    [50,70,85,100,115].forEach((lv,i)=>{const x=left+i*(right-left)/4, bh=(lv-35)*2.2; ctx.fillStyle=lv>=90?"rgba(255,77,109,.75)":lv>=75?"rgba(251,191,36,.72)":"rgba(34,211,238,.65)"; roundRect(ctx,x-25,baseY-bh,50,bh,10); ctx.fill(); ctx.fillStyle="#e8f5ff"; ctx.font="13px Sarabun"; ctx.textAlign="center"; ctx.fillText(lv+" dB",x,baseY+22);});
+    ctx.fillStyle="#e8f5ff"; ctx.font="bold 18px Sarabun"; ctx.textAlign="center"; ctx.fillText(`ก่อนป้องกัน ${source.toFixed(0)} dB  →  หลังป้องกันประมาณ ${after.toFixed(0)} dB`,w/2,panel.y+50);
+
+  } else if(mode==="applicationsSound"){
+    panel=baseTopic(ctx,w,h,"Applications of Sound");
+    const cards=[["อัลตราซาวด์","ตรวจภาพทางการแพทย์"],["โซนาร์","ตรวจวัตถุใต้น้ำ"],["Echolocation","สัตว์ใช้เสียงสะท้อน"],["อุตสาหกรรม","ตรวจรอยร้าวด้วยอัลตราซาวด์"]];
+    cards.forEach((card,i)=>{const x=panel.x+75+(i%2)*(panel.w/2), y=panel.y+75+Math.floor(i/2)*115; ctx.fillStyle="rgba(7,18,38,.80)"; ctx.strokeStyle="rgba(34,211,238,.45)"; roundRect(ctx,x,y,panel.w/2-115,80,14); ctx.fill(); ctx.stroke(); ctx.fillStyle="#22d3ee"; ctx.font="bold 17px Sarabun"; ctx.fillText(card[0],x+18,y+30); ctx.fillStyle="#e8f5ff"; ctx.font="14px Sarabun"; ctx.fillText(card[1],x+18,y+58);});
+  }
+}
+
+
 const $=id=>document.getElementById(id);
 let audioCtx,analyser,micSource,micStream,timeData,freqData,rafId,autoLogId;
 let latest={fft:0,auto:0,main:0,rms:0,db:0,dbFast:0,dbSlow:0,period:0,zcr:0};
@@ -1547,13 +1785,6 @@ function drawSpeedOfSoundTeachingFinal(ctx, c, pUnused, w, h){
 
 
 
-const soundTopicModes = new Set(["soundReflection","soundRefraction","soundDiffraction","soundInterference","resonanceAirHarmonics","shockWave","soundIntensity","soundIntensityLevel","soundLevelHearing","noisePollution","applicationsSound"]);
-function gNum(id,fb){const e=$(id); return e?Number(e.value||fb):fb;} function lab(id,t){if($(id))$(id).textContent=t;}
-function arr(ctx,x1,y1,x2,y2,col="#22d3ee",lw=3){ctx.save();ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();let a=Math.atan2(y2-y1,x2-x1),h=12;ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-h*Math.cos(a-Math.PI/6),y2-h*Math.sin(a-Math.PI/6));ctx.lineTo(x2-h*Math.cos(a+Math.PI/6),y2-h*Math.sin(a+Math.PI/6));ctx.closePath();ctx.fill();ctx.restore();}
-function baseTopic(ctx,w,h,title){ctx.clearRect(0,0,w,h);let bg=ctx.createLinearGradient(0,0,w,h);bg.addColorStop(0,"#020817");bg.addColorStop(1,"#06152e");ctx.fillStyle=bg;ctx.fillRect(0,0,w,h);ctx.strokeStyle="rgba(148,163,184,.10)";for(let x=0;x<w;x+=78){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=52){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}let p={x:44,y:76,w:w-88,h:h-126};ctx.fillStyle="rgba(4,18,42,.74)";ctx.strokeStyle="rgba(88,166,255,.32)";ctx.lineWidth=1.6;roundRect(ctx,p.x,p.y,p.w,p.h,18);ctx.fill();ctx.stroke();ctx.fillStyle="#e8f5ff";ctx.font="bold 20px Sarabun";ctx.textAlign="left";ctx.fillText(title,24,34);return p;}
-function waves(ctx,x,y,n,sp,col){ctx.save();ctx.strokeStyle=col;ctx.lineWidth=2;for(let i=1;i<=n;i++){ctx.globalAlpha=Math.max(.15,.8-i*.07);ctx.beginPath();ctx.arc(x,y,i*sp,-.85,.85);ctx.stroke();}ctx.restore();}
-function drawSoundTopicPlaceholder(ctx,c,p,w,h,mode){let box,cx,cy,t=vizState.t*.035*(p.speed||1); if(mode==="soundReflection"){let a=gNum("vizAngle",35);lab("vizAngleLabel",a.toFixed(0)+"°");box=baseTopic(ctx,w,h,"Sound Reflection (การสะท้อนของเสียง)");cx=w/2;cy=box.y+box.h*.52;let wx=box.x+box.w-210,sx=box.x+135,sy=cy+55;drawSpeaker(ctx,sx,sy,.85);waves(ctx,sx,sy,7,30,"rgba(34,211,238,.75)");ctx.strokeStyle="rgba(255,255,255,.65)";ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(wx,box.y+40);ctx.lineTo(wx,box.y+box.h-40);ctx.stroke();ctx.setLineDash([8,7]);ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(wx-140,cy);ctx.lineTo(wx+110,cy);ctx.stroke();ctx.setLineDash([]);arr(ctx,sx+65,sy-18,wx,cy,"#22d3ee",4);arr(ctx,wx,cy,sx+65,cy-110,"#ff5cab",4);ctx.fillStyle="#e8f5ff";ctx.font="bold 16px Sarabun";ctx.fillText("θᵢ = θᵣ",wx-95,cy+72);} else if(mode==="soundRefraction"){box=baseTopic(ctx,w,h,"Sound Refraction (การหักเหของเสียง)");cx=w/2;cy=box.y+box.h*.5;ctx.fillStyle="rgba(255,120,40,.08)";ctx.fillRect(box.x+18,box.y+22,box.w-36,box.h/2-22);ctx.fillStyle="rgba(34,211,238,.09)";ctx.fillRect(box.x+18,cy,box.w-36,box.h/2-22);ctx.strokeStyle="rgba(255,255,255,.45)";ctx.setLineDash([8,8]);ctx.beginPath();ctx.moveTo(box.x+30,cy);ctx.lineTo(box.x+box.w-30,cy);ctx.stroke();ctx.setLineDash([]);ctx.strokeStyle="#ff5cab";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(box.x+130,cy-115);ctx.quadraticCurveTo(cx-40,cy-15,cx,cy);ctx.quadraticCurveTo(cx+80,cy+80,cx+190,cy+135);ctx.stroke();arr(ctx,cx+120,cy+95,cx+190,cy+135,"#ff5cab",4);ctx.fillStyle="#e8f5ff";ctx.fillText("เบนเข้าหาบริเวณที่ช้ากว่า",box.x+70,box.y+box.h-28);} else if(mode==="soundDiffraction"){box=baseTopic(ctx,w,h,"Sound Diffraction (การเลี้ยวเบนของเสียง)");cx=w/2;cy=box.y+box.h*.52;let bx=cx-70;drawSpeaker(ctx,box.x+115,cy,.85);ctx.strokeStyle="rgba(255,255,255,.62)";ctx.lineWidth=8;ctx.beginPath();ctx.moveTo(bx,box.y+45);ctx.lineTo(bx,cy-45);ctx.stroke();ctx.beginPath();ctx.moveTo(bx,cy+45);ctx.lineTo(bx,box.y+box.h-45);ctx.stroke();waves(ctx,bx,cy,8,34,"rgba(255,92,171,.88)");ctx.fillStyle="#e8f5ff";ctx.fillText("a ≈ λ → เลี้ยวเบนเด่น",cx+115,box.y+48);} else if(mode==="soundInterference"){box=baseTopic(ctx,w,h,"Sound Interference (การแทรกสอดของเสียง)");cx=w/2;cy=box.y+box.h*.52;let sx=box.x+150,s1=cy-70,s2=cy+70;drawSpeaker(ctx,sx,s1,.7);drawSpeaker(ctx,sx,s2,.7);for(let r=35;r<380;r+=35){ctx.strokeStyle=`rgba(34,211,238,${.45-r/900})`;ctx.beginPath();ctx.arc(sx,s1,r,0,Math.PI*2);ctx.stroke();ctx.strokeStyle=`rgba(255,92,171,${.43-r/900})`;ctx.beginPath();ctx.arc(sx,s2,r,0,Math.PI*2);ctx.stroke();}ctx.fillStyle="#e8f5ff";ctx.fillText("Δr = mλ (เสริม) / (m+1/2)λ (หักล้าง)",cx+10,box.y+48);} else if(mode==="shockWave"){let M=gNum("vizMach",1.5);lab("vizMachLabel",M.toFixed(2));box=baseTopic(ctx,w,h,"Shock Wave / Sonic Boom");cx=w/2;cy=box.y+box.h*.52;let th=Math.asin(1/Math.max(M,1.01)),sx=cx+80;ctx.font="bold 30px Sarabun";ctx.fillText("✈️",sx,cy);ctx.strokeStyle="#c084fc";ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(sx,cy);ctx.lineTo(sx-330,cy-Math.tan(th)*330);ctx.stroke();ctx.beginPath();ctx.moveTo(sx,cy);ctx.lineTo(sx-330,cy+Math.tan(th)*330);ctx.stroke();ctx.fillText("sin θ = 1/M",sx-90,cy+76);} else if(mode==="soundIntensity"||mode==="soundIntensityLevel"){box=baseTopic(ctx,w,h,mode==="soundIntensity"?"Sound Intensity (ความเข้มเสียง)":"Sound Intensity Level (ระดับความเข้มเสียง)");cy=box.y+box.h*.46;let sx=box.x+130;drawSpeaker(ctx,sx,cy,.9);waves(ctx,sx,cy,7,44,"rgba(34,211,238,.65)");ctx.fillStyle="#e8f5ff";ctx.font="bold 18px Sarabun";ctx.textAlign="center";ctx.fillText(mode==="soundIntensity"?"I = P / 4πr² และ I ∝ 1/r²":"β = 10 log₁₀(I/I₀),  I₀ = 1.0×10⁻¹² W/m²",w/2,box.y+box.h-45);} else if(mode==="soundLevelHearing"){box=baseTopic(ctx,w,h,"Sound Level, Frequency and Hearing");ctx.fillStyle="rgba(34,211,238,.18)";roundRect(ctx,box.x+110,box.y+70,box.w-220,box.h-145,30);ctx.fill();ctx.fillStyle="#e8f5ff";ctx.textAlign="center";ctx.fillText("ช่วงการได้ยิน 20 Hz – 20 kHz | หูไวมากประมาณ 2–5 kHz",w/2,box.y+box.h-42);} else if(mode==="noisePollution"){box=baseTopic(ctx,w,h,"Noise Pollution and Protection");let base=box.y+box.h-80,left=box.x+90,right=box.x+box.w-90;[...Array(6)].forEach((_,i)=>{let x=left+i*(right-left)/5,bh=45+i*28;ctx.fillStyle=i>3?"rgba(255,77,109,.75)":i>2?"rgba(251,191,36,.72)":"rgba(34,211,238,.65)";roundRect(ctx,x-24,base-bh,48,bh,10);ctx.fill();});} else if(mode==="resonanceAirHarmonics"){box=baseTopic(ctx,w,h,"Resonance Air Column: Harmonic Modes");for(let row=0;row<3;row++){let y=box.y+80+row*85,left=box.x+120,right=box.x+box.w-120,pts=[];ctx.strokeStyle="rgba(255,255,255,.42)";ctx.strokeRect(left,y-25,right-left,50);for(let x=left;x<=right;x++){let u=(x-left)/(right-left)*Math.PI*(row*2+1);pts.push([x,y-Math.sin(u)*22]);}drawWaveLine(ctx,pts,row===0?"#22d3ee":row===1?"#a78bfa":"#ff5cab",3);}} else {box=baseTopic(ctx,w,h,"Applications of Sound");["แพทย์: อัลตราซาวด์","โซนาร์: ตรวจใต้น้ำ","Echolocation","อุตสาหกรรม"].forEach((s,i)=>{let x=box.x+80+(i%2)*box.w/2,y=box.y+80+Math.floor(i/2)*115;ctx.fillStyle="rgba(7,18,38,.8)";ctx.strokeStyle="rgba(34,211,238,.45)";roundRect(ctx,x,y,box.w/2-120,80,14);ctx.fill();ctx.stroke();ctx.fillStyle="#e8f5ff";ctx.fillText(s,x+20,y+45);});}}
-
 function drawVisualizer(){
   const c=$("visualizerCanvas"); if(!c) return;
   const ctx=c.getContext("2d");
@@ -1839,9 +2070,9 @@ function initVisualizer(){
     getVizParams();
     if(typeof drawVisualizer === "function") drawVisualizer();
   }));
-  if($("vizPlayBtn")) $("vizPlayBtn").onclick=()=>{vizState.running=true;updateVizPlayerButtons("play");};
-  if($("vizPauseBtn")) $("vizPauseBtn").onclick=()=>{vizState.running=false;updateVizPlayerButtons("pause");};
-  if($("vizResetBtn")) $("vizResetBtn").onclick=()=>{vizState.t=0;updateVizPlayerButtons("reset");};
+  if($("vizPlayBtn")) $("vizPlayBtn").onclick=()=>{vizState.running=true;updateVizPlayerButtons("play");drawVisualizer();};
+  if($("vizPauseBtn")) $("vizPauseBtn").onclick=()=>{vizState.running=false;updateVizPlayerButtons("pause");drawVisualizer();};
+  if($("vizResetBtn")) $("vizResetBtn").onclick=()=>{vizState.t=0;vizState.running=false;updateVizPlayerButtons("reset");drawVisualizer();};
   if($("vizExportBtn")) $("vizExportBtn").onclick=()=>{
     const c=$("visualizerCanvas");
     const a=document.createElement("a");
