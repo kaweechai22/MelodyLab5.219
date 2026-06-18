@@ -1,65 +1,375 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MelodyLab v5.116 - Standing Wave (คลื่นนิ่ง)</title><meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ"><meta name="theme-color" content="#0f172a"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="style.css"><meta name="melodylab-build-version" content="v5.116-clean-release"></head><body class="detailPage page-visualizer"><header><div class="wrap nav detailNav"><button class="backBtn" onclick="location.href='visualizer.html'">←</button><a class="brand" href="index.html"><img src="icon-192.png" alt="MelodyLab"><span>Standing Wave (คลื่นนิ่ง)</span></a></div></header>
-<main class="wrap detailMain" data-current="visualizer">
-<section class="section activeDetail visualizerSinglePage visualizerTemplatePage longitudinalFocusPage rebuiltTopicPage" id="visualizer" data-viz-mode="standingAir">
-  <div class="sectionHead templateHead">
-    <div><h2>Standing Wave (คลื่นนิ่ง)</h2><p class="sectionLead">คลื่นเดินทางสวนทางกันเกิดปมและปฏิบัพ</p></div>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MelodyLab v5.223 - Standing Wave (คลื่นนิ่งของเสียง)</title>
+  <meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <meta name="melodylab-build-version" content="v5.223-standing-wave-physics-design">
+  <style>
+    .standingWavePage .versionBadge{display:inline-flex;margin-top:10px;padding:8px 14px;border-radius:999px;background:rgba(16,185,129,.14);border:1px solid rgba(52,211,153,.35);color:#bbf7d0;font-weight:900}
+    .standingCanvas{display:block;width:100% !important;height:min(58vh,430px) !important;min-height:360px !important;max-height:430px !important;aspect-ratio:auto !important}
+    .standingReadout{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+    .standingReadout>div{background:rgba(15,23,42,.66);border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:10px 12px}
+    .standingReadout label{display:block;font-size:.74rem;color:#9fb0c7;font-weight:800}
+    .standingReadout b{font-size:1.02rem;color:#f8fafc}
+    .nodeIcon{background:linear-gradient(135deg,#ef4444,#f97316)}
+    .antiIcon{background:linear-gradient(135deg,#22c55e,#67e8f9)}
+    .modeIcon{background:linear-gradient(135deg,#8b5cf6,#c084fc)}
+    .lengthIcon{background:linear-gradient(135deg,#0ea5e9,#22d3ee)}
+    .speedIcon{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    .ampIcon{background:linear-gradient(135deg,#22c55e,#86efac)}
+    .timeIcon{background:linear-gradient(135deg,#6366f1,#a78bfa)}
+    .standingLegend .legendLine{width:36px;height:4px;border-radius:999px;display:inline-block}
+    .standingLegend .dispLine{background:#38bdf8;box-shadow:0 0 10px rgba(56,189,248,.45)}
+    .standingLegend .pressLine{background:#f59e0b;box-shadow:0 0 10px rgba(245,158,11,.45)}
+    .standingLegend .envelopeLine{background:#a78bfa;box-shadow:0 0 10px rgba(167,139,250,.45)}
+    .standingLegend .redDot{width:12px;height:12px;border-radius:999px;background:#ef4444;display:inline-block}
+    .standingLegend .greenDot{width:12px;height:12px;border-radius:999px;background:#22c55e;display:inline-block}
+    .physicsFocus{border:1px solid rgba(34,211,238,.25);background:linear-gradient(180deg,rgba(14,165,233,.08),rgba(15,23,42,.62));border-radius:18px;padding:12px;margin-top:12px}
+    .physicsFocus b{color:#e0f2fe}
+    @media(max-width:760px){
+      .standingCanvas{height:min(56vh,420px) !important;min-height:360px !important;max-height:420px !important}
+      .standingReadout{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .standingReadout>div:last-child{grid-column:1/-1}
+      .standingReadout>div{padding:9px 10px}
+    }
+  </style>
+</head>
+<body class="detailPage page-visualizer">
+<header>
+  <div class="wrap nav detailNav">
+    <button class="backBtn" onclick="location.href='visualizer.html'">←</button>
+    <a class="brand" href="index.html"><img src="icon-192.png" alt="MelodyLab"><span>Standing Wave (คลื่นนิ่งของเสียง)</span></a>
   </div>
+</header>
+
+<main class="wrap detailMain" data-current="visualizer">
+<section class="section activeDetail visualizerSinglePage visualizerTemplatePage longitudinalFocusPage rebuiltTopicPage standingWavePage" id="visualizer" data-viz-mode="standingAir">
+  <div class="sectionHead templateHead">
+    <div>
+      <h2>11. Standing Wave (คลื่นนิ่งของเสียง)</h2>
+      <p class="sectionLead">คลื่นนิ่งของเสียงต้องดู 2 ปริมาณพร้อมกัน คือการกระจัดของอากาศและความดันเสียง โดยบัพ (Node) และปฏิบัพ (Antinode) ของสองปริมาณนี้สลับตำแหน่งกัน</p>
+      <span class="versionBadge">v5.223 • แยกการกระจัด/ความดัน</span>
+    </div>
+  </div>
+
   <div class="visualizerTemplateGrid longitudinalFocusGrid">
     <div class="card mainViz templateMainViz longitudinalMainViz">
       <div class="vizMediaFrame">
-        <div class="vizSingleModeLabel"><span>🎼</span> Standing Wave (คลื่นนิ่ง)</div>
-        <canvas id="visualizerCanvas" width="1200" height="440"></canvas>
+        <div class="vizSingleModeLabel"><span>🎼</span> Standing Wave: Displacement + Pressure</div>
+        <canvas id="standingCanvas" class="standingCanvas" width="1200" height="430" aria-label="ภาพจำลองคลื่นนิ่งของเสียง"></canvas>
         <div class="vizPlayerBar embeddedPlayerBar" aria-label="ปุ่มควบคุมภาพจำลอง">
           <div class="playerCluster playerCenter playerCenterOnly">
-            <button id="vizPlayBtn" class="playerBtn playerPrimary playerPlay" title="เล่น" aria-label="เล่น"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6.5v11l9-5.5-9-5.5z"/></svg></span></button>
-            <button id="vizPauseBtn" class="playerBtn playerPause" title="หยุด" aria-label="หยุด"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="3.5" height="12" rx="1.2"/><rect x="13.5" y="6" width="3.5" height="12" rx="1.2"/></svg></span></button>
-            <button id="vizResetBtn" class="playerBtn playerReset" title="รีเซ็ต" aria-label="รีเซ็ต"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19 5v5h-5"/></svg></span></button>
+            <button id="standingPlayBtn" class="playerBtn playerPrimary playerPlay" title="เล่น" aria-label="เล่น"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6.5v11l9-5.5-9-5.5z"/></svg></span></button>
+            <button id="standingPauseBtn" class="playerBtn playerPause" title="หยุด" aria-label="หยุด"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="3.5" height="12" rx="1.2"/><rect x="13.5" y="6" width="3.5" height="12" rx="1.2"/></svg></span></button>
+            <button id="standingResetBtn" class="playerBtn playerReset" title="รีเซ็ต" aria-label="รีเซ็ต"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19 5v5h-5"/></svg></span></button>
           </div>
         </div>
       </div>
-      <details class="explainDetails"><summary>คำอธิบายเพิ่มเติม</summary>
-        <div class="detailsBody"><div class="templateUnderCanvas explainGrid">
-          <div class="templateInsightCard"><div class="insightTitle">สิ่งที่สังเกตได้</div><ul>
-                <li>ปมคือจุดที่แอมพลิจูดการกระจัดน้อยมาก</li>
-                <li>ปฏิบัพคือจุดที่แอมพลิจูดมาก</li>
-                <li>ท่อเปิดและท่อปิดมีรูปแบบปม/ปฏิบัพต่างกัน</li>
-          </ul></div>
-          <div class="templateLegendCard">
-            <div class="legendRow"><span class="legendDot cyan"></span><span>แนวคลื่น/รังสีเสียง</span></div>
-            <div class="legendRow"><span class="legendDot red"></span><span>จุดสังเกตหรือค่าที่กำลังพิจารณา</span></div>
-            <div class="legendRow"><span class="legendMark">→</span><span>ทิศทางการเคลื่อนที่ของเสียง</span></div>
+
+      <div class="standingReadout templateReadout" aria-label="ค่าที่อ่านได้">
+        <div><label>รูปแบบปลาย</label><b id="readBoundary">--</b></div>
+        <div><label>โหมด / ฮาร์มอนิก</label><b id="readMode">--</b></div>
+        <div><label>ความยาวคลื่น λ</label><b id="readLambda">--</b></div>
+        <div><label>ความถี่ f</label><b id="readFreq">--</b></div>
+        <div><label>ตำแหน่งเสียงดัง</label><b id="readLoud">--</b></div>
+      </div>
+
+      <div class="physicsFocus">
+        <b>จุดเน้นทางฟิสิกส์:</b> ไมโครโฟนวัดความดันเสียง ไม่ได้วัดการกระจัดของอากาศ ดังนั้นตำแหน่งที่ไมค์ได้เสียงดังมากคือบริเวณ <b>ปฏิบัพของความดัน (Pressure Antinode)</b>
+      </div>
+
+      <details class="explainDetails" open>
+        <summary>หลักฟิสิกส์และสิ่งที่ควรสังเกต</summary>
+        <div class="detailsBody">
+          <div class="templateUnderCanvas explainGrid">
+            <div class="templateInsightCard">
+              <div class="insightTitle">ดูให้ถูก: เสียงไม่เหมือนเส้นเชือก</div>
+              <ul>
+                <li>เส้นบนแสดง <b>การกระจัดของอากาศ</b> ว่าอนุภาคอากาศสั่นมากหรือน้อย</li>
+                <li>เส้นล่างแสดง <b>ความดันเสียง</b> ว่าบริเวณใดอากาศถูกอัด–ขยายมาก</li>
+                <li>บัพ (Node) ของการกระจัดตรงกับปฏิบัพ (Antinode) ของความดัน</li>
+                <li>ปฏิบัพ (Antinode) ของการกระจัดตรงกับบัพ (Node) ของความดัน</li>
+                <li>ปลายเปิด: การกระจัดเป็นปฏิบัพ แต่ความดันเป็นบัพ</li>
+                <li>ปลายปิด: การกระจัดเป็นบัพ แต่ความดันเป็นปฏิบัพ</li>
+              </ul>
+            </div>
+            <div class="templateLegendCard standingLegend">
+              <div class="legendRow"><span class="legendLine dispLine"></span><span>การกระจัดของอากาศ</span></div>
+              <div class="legendRow"><span class="legendLine pressLine"></span><span>ความดันเสียง</span></div>
+              <div class="legendRow"><span class="legendLine envelopeLine"></span><span>ขอบเขตแอมพลิจูดสูงสุด</span></div>
+              <div class="legendRow"><span class="redDot"></span><span>บัพ (Node)</span></div>
+              <div class="legendRow"><span class="greenDot"></span><span>ปฏิบัพ (Antinode)</span></div>
+            </div>
           </div>
-        </div></div>
+        </div>
       </details>
     </div>
+
     <div class="card controlViz templateControlViz longitudinalControlViz neonControlViz">
-      <div class="panelTitleStack"><h3>Parameters (ตัวแปรควบคุม)</h3><p class="panelSubtext">ปรับค่าแล้วสังเกตการเปลี่ยนแปลงของภาพจำลอง</p></div>
+      <div class="panelTitleStack"><h3>Parameters (ตัวแปรควบคุม)</h3><p class="panelSubtext">เน้นเงื่อนไขปลายท่อและตำแหน่งบัพ/ปฏิบัพของเสียง</p></div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">n</div>
-        <div class="paramText"><label>โหมด</label><small>Mode n</small></div>
-        <input id="vizTubeMode" type="range" min="1" max="5" step="1" value="2">
-        <div class="paramValueWrap"><span id="vizTubeModeLabel" class="valueBadge">2</span></div>
-      </div>
-      <div class="field richField neonParamRow">
-        <div class="paramIcon">▣</div>
-        <div class="paramText"><label>ชนิดท่อ</label><small>Tube type</small></div>
-        <select id="vizSubMode">
-          <option value="open" selected>open-open</option>
-          <option value="closed">closed-open</option>
+        <div class="paramIcon nodeIcon">ปลาย</div>
+        <div class="paramText"><label>รูปแบบปลาย</label><small>เงื่อนไขขอบเขตของคลื่นเสียง</small></div>
+        <select id="standingBoundary">
+          <option value="open" selected>ท่อเปิด–เปิด</option>
+          <option value="closed">ท่อปิด–เปิด</option>
+          <option value="fixed">เส้นเชือกตรึงสองปลาย (เปรียบเทียบ)</option>
         </select>
-        <div class="paramValueWrap"><span id="vizSubModeLabel" class="valueBadge">open</span></div>
+        <div class="paramValueWrap"><span id="boundaryLabel" class="valueBadge">--</span></div>
       </div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">◷</div>
-        <div class="paramText"><label>อัตราเวลา</label><small>Time Speed</small></div>
-        <input id="vizTimeSpeed" type="range" min="0.10" max="3.0" step="0.10" value="1.0">
-        <div class="paramValueWrap"><span id="vizTimeLabel" class="valueBadge">1.0×</span></div>
+        <div class="paramIcon modeIcon">n</div>
+        <div class="paramText"><label>โหมด</label><small>ลำดับรูปแบบคลื่นนิ่ง</small></div>
+        <input id="standingMode" type="range" min="1" max="5" step="1" value="1">
+        <div class="paramValueWrap"><span id="modeLabel" class="valueBadge">--</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon lengthIcon">L</div>
+        <div class="paramText"><label>ความยาว L</label><small>ความยาวท่อ/เส้นเชือก</small></div>
+        <input id="standingLength" type="range" min="0.20" max="2.00" step="0.05" value="1.00">
+        <div class="paramValueWrap"><span id="lengthLabel" class="valueBadge">--</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon speedIcon">v</div>
+        <div class="paramText"><label>อัตราเร็วคลื่น</label><small>เสียงในอากาศประมาณ 343 m/s</small></div>
+        <input id="standingSpeed" type="range" min="100" max="500" step="1" value="343">
+        <div class="paramValueWrap"><span id="speedLabel" class="valueBadge">--</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon ampIcon">A</div>
+        <div class="paramText"><label>แอมพลิจูด</label><small>ขนาดการสั่น</small></div>
+        <input id="standingAmp" type="range" min="0.20" max="1.30" step="0.05" value="0.85">
+        <div class="paramValueWrap"><span id="ampLabel" class="valueBadge">--</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon timeIcon">◷</div>
+        <div class="paramText"><label>ความเร็วแอนิเมชัน</label><small>การกระจัดและความดันต่างเฟสกัน</small></div>
+        <input id="standingTimeSpeed" type="range" min="0.10" max="1.50" step="0.10" value="0.45">
+        <div class="paramValueWrap"><span id="timeLabel" class="valueBadge">--</span></div>
       </div>
     </div>
   </div>
-  <div class="card localExportCard templateExportCard" data-export-name="standingAir">
+
+  <div class="card localExportCard templateExportCard" data-export-name="standingWave">
     <div class="panelTitleStack"><h3>ส่งออกข้อมูล</h3><p class="panelSubtext">บันทึกค่าพารามิเตอร์และภาพจำลองจากหน้านี้</p></div>
-    <div class="actions"><button class="secondary localCaptureBtn">บันทึกค่าปัจจุบัน</button><button class="secondary localDownloadBtn">ดาวน์โหลด CSV</button><button id="vizExportBtn" class="secondary localPngBtn">บันทึกภาพ PNG</button><button class="secondary localClearBtn">ล้างข้อมูลหน้านี้</button></div>
-    <div class="tableWrap localLogWrap"><table><thead><tr class="localHead"></tr></thead><tbody class="localBody"></tbody></table></div>
+    <div class="actions"><button id="standingCaptureBtn" class="secondary localCaptureBtn">บันทึกค่าปัจจุบัน</button><button id="standingDownloadBtn" class="secondary localDownloadBtn">ดาวน์โหลด CSV</button><button id="standingPngBtn" class="secondary localPngBtn">บันทึกภาพ PNG</button><button id="standingClearBtn" class="secondary localClearBtn">ล้างข้อมูลหน้านี้</button></div>
+    <div class="tableWrap localLogWrap"><table><thead><tr id="standingHead"></tr></thead><tbody id="standingBody"></tbody></table></div>
   </div>
-</section></main><script src="app.js"></script></body></html>
+</section>
+</main>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const state = {running:true,last:performance.now(),time:0.13,logs:[]};
+function fmt(v,d=2){return Number(v).toFixed(d).replace(/\.?0+$/,'');}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+function params(){
+  const boundary=$('standingBoundary')?.value || 'open';
+  const mode=Number($('standingMode')?.value || 1);
+  const L=Number($('standingLength')?.value || 1.00);
+  const v=Number($('standingSpeed')?.value || 343);
+  const A=Number($('standingAmp')?.value || 0.85);
+  const timeSpeed=Number($('standingTimeSpeed')?.value || 0.45);
+  const h=boundary==='closed' ? 2*mode-1 : mode;
+  let lambda, freq, boundaryName, modeText, loudText, formula;
+  if(boundary==='closed'){
+    lambda=4*L/h; freq=h*v/(4*L); boundaryName='ท่อปิด–เปิด'; modeText=`ลำดับ ${mode} (ฮาร์มอนิก ${h})`; loudText='ใกล้ปลายปิด'; formula='λ = 4L/(2n−1)';
+  }else if(boundary==='fixed'){
+    lambda=2*L/mode; freq=mode*v/(2*L); boundaryName='เส้นเชือกตรึง–ตรึง'; modeText=`n = ${mode}`; loudText='ไม่ใช้ไมค์วัดความดัน'; formula='λ = 2L/n';
+  }else{
+    lambda=2*L/mode; freq=mode*v/(2*L); boundaryName='ท่อเปิด–เปิด'; modeText=`n = ${mode}`; loudText='กลางช่วงระหว่างปลายเปิด'; formula='λ = 2L/n';
+  }
+  return {boundary,mode,h,L,v,A,timeSpeed,lambda,freq,boundaryName,modeText,loudText,formula};
+}
+function canvasScale(canvas){
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect();
+  const cssW=Math.max(320,Math.round(rect.width||720));
+  const cssH=Math.max(330,Math.round(rect.height||420));
+  const targetW=Math.round(cssW*dpr), targetH=Math.round(cssH*dpr);
+  if(canvas.width!==targetW||canvas.height!==targetH){canvas.width=targetW;canvas.height=targetH;}
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w:cssW,h:cssH,dpr};
+}
+function rr(ctx,x,y,w,h,r,fill,stroke){
+  const q=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+q,y);ctx.arcTo(x+w,y,x+w,y+h,q);ctx.arcTo(x+w,y+h,x,y+h,q);ctx.arcTo(x,y+h,x,y,q);ctx.arcTo(x,y,x+w,y,q);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();
+}
+function drawLine(ctx,pts,color,lw=2,alpha=1,dash=null){
+  ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';if(dash)ctx.setLineDash(dash);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();
+}
+function background(ctx,w,h){
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#071426');g.addColorStop(.55,'#101338');g.addColorStop(1,'#1d1238');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(56,189,248,.10)';ctx.lineWidth=1;
+  for(let x=0;x<w;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+}
+function displacementShape(p,u){
+  if(p.boundary==='open') return Math.cos(p.mode*Math.PI*u);
+  if(p.boundary==='fixed') return Math.sin(p.mode*Math.PI*u);
+  return Math.sin(p.h*Math.PI*u/2);
+}
+function pressureShape(p,u){
+  if(p.boundary==='open') return Math.sin(p.mode*Math.PI*u);
+  if(p.boundary==='closed') return Math.cos(p.h*Math.PI*u/2);
+  return 0;
+}
+function displacementNodes(p){
+  const arr=[];
+  if(p.boundary==='open'){for(let i=0;i<p.mode;i++) arr.push((i+0.5)/p.mode);}
+  else if(p.boundary==='fixed'){for(let i=0;i<=p.mode;i++) arr.push(i/p.mode);}
+  else{for(let i=0;i<=Math.floor(p.h/2);i++) arr.push((2*i)/p.h);}
+  return arr.filter(x=>x>=-1e-6&&x<=1+1e-6);
+}
+function displacementAntinodes(p){
+  const arr=[];
+  if(p.boundary==='open'){for(let i=0;i<=p.mode;i++) arr.push(i/p.mode);}
+  else if(p.boundary==='fixed'){for(let i=0;i<p.mode;i++) arr.push((i+0.5)/p.mode);}
+  else{for(let i=0;i<=Math.floor((p.h-1)/2);i++) arr.push((2*i+1)/p.h);}
+  return arr.filter(x=>x>=-1e-6&&x<=1+1e-6);
+}
+function pressureNodes(p){
+  if(p.boundary==='fixed') return [];
+  return displacementAntinodes(p);
+}
+function pressureAntinodes(p){
+  if(p.boundary==='fixed') return [];
+  return displacementNodes(p);
+}
+function makePts(fn,left,right,mid,scale,step=1){
+  const pts=[];const W=right-left;
+  for(let i=0;i<=W;i+=step){const u=i/W;pts.push([left+i,mid-fn(u)*scale]);}
+  if(!pts.length||pts[pts.length-1][0]<right) pts.push([right,mid-fn(1)*scale]);
+  return pts;
+}
+function dot(ctx,x,y,r,color,label){
+  ctx.save();ctx.fillStyle=color;ctx.strokeStyle='rgba(255,255,255,.88)';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();
+  if(label){ctx.fillStyle='rgba(226,232,240,.93)';ctx.font='800 9px system-ui,sans-serif';ctx.textAlign='center';ctx.fillText(label,x,y-10);}
+  ctx.restore();
+}
+function drawBoundary(ctx,left,right,y,p){
+  ctx.save();ctx.strokeStyle='rgba(226,232,240,.34)';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(right,y);ctx.stroke();
+  const H=44;
+  const open=x=>{ctx.strokeStyle='rgba(34,211,238,.72)';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(x,y-H/2);ctx.lineTo(x,y+H/2);ctx.stroke();ctx.fillStyle='rgba(34,211,238,.16)';ctx.beginPath();ctx.arc(x,y,13,-Math.PI/2,Math.PI/2);ctx.stroke();};
+  const closed=x=>{ctx.strokeStyle='rgba(248,113,113,.80)';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,y-H/2);ctx.lineTo(x,y+H/2);ctx.stroke();ctx.lineWidth=1;for(let yy=y-H/2;yy<=y+H/2;yy+=9){ctx.beginPath();ctx.moveTo(x-11,yy+9);ctx.lineTo(x,yy);ctx.stroke();}};
+  if(p.boundary==='closed'){closed(left);open(right);} else if(p.boundary==='open'){open(left);open(right);} else {closed(left);closed(right);}
+  ctx.restore();
+}
+function laneLabel(ctx,x,y,title,sub,color){
+  ctx.save();ctx.fillStyle='rgba(15,23,42,.74)';ctx.strokeStyle='rgba(148,163,184,.18)';rr(ctx,x,y,Math.min(260,ctx.canvas.width),44,14,true,true);
+  ctx.fillStyle=color;ctx.font='900 12px system-ui,sans-serif';ctx.fillText(title,x+14,y+18);
+  ctx.fillStyle='rgba(203,213,225,.90)';ctx.font='800 10px system-ui,sans-serif';ctx.fillText(sub,x+14,y+34);
+  ctx.restore();
+}
+function updateLabels(){
+  const p=params();
+  $('boundaryLabel').textContent=p.boundaryName.replace('ท่อ','');
+  $('modeLabel').textContent=p.modeText;
+  $('lengthLabel').textContent=`${fmt(p.L,2)} m`;
+  $('speedLabel').textContent=`${fmt(p.v,0)} m/s`;
+  $('ampLabel').textContent=fmt(p.A,2);
+  $('timeLabel').textContent=`${fmt(p.timeSpeed,1)}×`;
+  $('readBoundary').textContent=p.boundaryName;
+  $('readMode').textContent=p.modeText;
+  $('readLambda').textContent=`${fmt(p.lambda,2)} m`;
+  $('readFreq').textContent=`${fmt(p.freq,1)} Hz`;
+  $('readLoud').textContent=p.loudText;
+}
+function draw(){
+  const canvas=$('standingCanvas');if(!canvas)return;
+  const {w,h}=canvasScale(canvas),ctx=canvas.getContext('2d'),p=params();updateLabels();background(ctx,w,h);
+  const left=Math.max(52,Math.round(w*0.11)),right=w-Math.max(36,Math.round(w*0.07)),plotW=right-left;
+  const yD=Math.round(h*0.35), yP=Math.round(h*0.68);
+  const amp=Math.min(58*p.A,h*0.15);
+  const theta=2*Math.PI*state.time;
+  const dispTime=Math.cos(theta);
+  const pressTime=Math.sin(theta);
+  drawBoundary(ctx,left,right,yD,p);
+  if(p.boundary!=='fixed') drawBoundary(ctx,left,right,yP,p);
+
+  laneLabel(ctx,16,14,'การกระจัดของอากาศ','ดูว่าอนุภาคอากาศสั่นมากหรือน้อย','#38bdf8');
+  if(p.boundary==='fixed') laneLabel(ctx,16,yP-72,'เส้นเชือก: มีเฉพาะการกระจัด','ใช้เปรียบเทียบกับเสียงในท่อ','#f59e0b');
+  else laneLabel(ctx,16,yP-72,'ความดันเสียง','ไมโครโฟนวัดปริมาณนี้','#f59e0b');
+
+  const D=u=>displacementShape(p,u);
+  drawLine(ctx,makePts(u=>Math.abs(D(u)),left,right,yD,amp,1),'#a78bfa',1.6,.85,[7,6]);
+  drawLine(ctx,makePts(u=>-Math.abs(D(u)),left,right,yD,amp,1),'#a78bfa',1.6,.85,[7,6]);
+  drawLine(ctx,makePts(u=>D(u)*dispTime,left,right,yD,amp,1),'#38bdf8',3.0,1);
+
+  displacementNodes(p).forEach((u,i)=>dot(ctx,left+u*plotW,yD,4.8,'#ef4444',i<6?'บัพ':''));
+  displacementAntinodes(p).forEach((u,i)=>dot(ctx,left+u*plotW,yD-D(u)*dispTime*amp,5.2,'#22c55e',i<6?'ปฏิบัพ':''));
+
+  if(p.boundary!=='fixed'){
+    const P=u=>pressureShape(p,u);
+    drawLine(ctx,makePts(u=>Math.abs(P(u)),left,right,yP,amp,1),'#a78bfa',1.6,.85,[7,6]);
+    drawLine(ctx,makePts(u=>-Math.abs(P(u)),left,right,yP,amp,1),'#a78bfa',1.6,.85,[7,6]);
+    drawLine(ctx,makePts(u=>P(u)*pressTime,left,right,yP,amp,1),'#f59e0b',3.0,1);
+    pressureNodes(p).forEach((u,i)=>dot(ctx,left+u*plotW,yP,4.8,'#ef4444',i<6?'บัพ':''));
+    pressureAntinodes(p).forEach((u,i)=>dot(ctx,left+u*plotW,yP-P(u)*pressTime*amp,5.2,'#22c55e',i<6?'ปฏิบัพ':''));
+    pressureAntinodes(p).forEach((u,i)=>{
+      if(i>5) return;
+      const x=left+u*plotW;
+      ctx.save();ctx.fillStyle='rgba(34,197,94,.12)';ctx.strokeStyle='rgba(34,197,94,.30)';ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(x,yP-amp-20);ctx.lineTo(x,yP+amp+20);ctx.stroke();ctx.restore();
+    });
+  }else{
+    ctx.save();ctx.fillStyle='rgba(245,158,11,.13)';ctx.strokeStyle='rgba(245,158,11,.30)';rr(ctx,left,yP-42,right-left,84,16,true,true);
+    ctx.fillStyle='rgba(254,243,199,.95)';ctx.font='900 13px system-ui,sans-serif';ctx.fillText('เส้นเชือกไม่มีกราฟความดันเสียง',left+18,yP-8);
+    ctx.fillStyle='rgba(203,213,225,.86)';ctx.font='800 11px system-ui,sans-serif';ctx.fillText('ต่างจากคลื่นนิ่งของเสียงในท่ออากาศ',left+18,yP+16);ctx.restore();
+  }
+
+  ctx.save();
+  ctx.fillStyle='rgba(15,23,42,.72)';ctx.strokeStyle='rgba(148,163,184,.18)';rr(ctx,16,h-76,Math.min(w-32,350),58,16,true,true);
+  ctx.fillStyle='rgba(226,232,240,.95)';ctx.font='900 13px system-ui,sans-serif';ctx.fillText(`${p.boundaryName} • ${p.modeText}`,32,h-52);
+  ctx.fillStyle='rgba(148,163,184,.95)';ctx.font='800 11px system-ui,sans-serif';ctx.fillText(`${p.formula},  λ = ${fmt(p.lambda,2)} m,  f = ${fmt(p.freq,1)} Hz`,32,h-31);
+  ctx.restore();
+}
+function row(){
+  const p=params();
+  return {timestamp:new Date().toISOString(),topic:'Standing Wave Sound',boundary:p.boundaryName,mode:p.mode,harmonic:p.h,length_m:Number(fmt(p.L,2)),wave_speed_mps:Number(fmt(p.v,0)),wavelength_m:Number(fmt(p.lambda,3)),frequency_Hz:Number(fmt(p.freq,2)),loud_position:p.loudText,displacement_nodes:displacementNodes(p).length,pressure_antinodes:pressureAntinodes(p).length};
+}
+function renderTable(){
+  const head=$('standingHead'),body=$('standingBody');if(!head||!body)return;
+  const keys=['timestamp','boundary','mode','harmonic','length_m','wave_speed_mps','wavelength_m','frequency_Hz','loud_position','displacement_nodes','pressure_antinodes'];
+  head.innerHTML=keys.map(k=>`<th>${k}</th>`).join('');
+  body.innerHTML=state.logs.map(r=>`<tr>${keys.map(k=>`<td>${r[k]??''}</td>`).join('')}</tr>`).join('');
+}
+function downloadCSV(){
+  if(!state.logs.length) state.logs.push(row());
+  const keys=Object.keys(state.logs[0]);
+  const csv=[keys.join(','),...state.logs.map(r=>keys.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='melodylab_standing_wave_sound.csv';a.click();URL.revokeObjectURL(a.href);renderTable();
+}
+function savePNG(){const canvas=$('standingCanvas');if(!canvas)return;const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='melodylab_standing_wave_sound.png';a.click();}
+function tick(now){
+  const dt=Math.min(.05,(now-state.last)/1000);state.last=now;
+  if(state.running) state.time += dt*params().timeSpeed*0.28;
+  draw();requestAnimationFrame(tick);
+}
+['standingBoundary','standingMode','standingLength','standingSpeed','standingAmp','standingTimeSpeed'].forEach(id=>{$(id)?.addEventListener('input',draw);$(id)?.addEventListener('change',draw);});
+$('standingPlayBtn')?.addEventListener('click',()=>{state.running=true;});
+$('standingPauseBtn')?.addEventListener('click',()=>{state.running=false;});
+$('standingResetBtn')?.addEventListener('click',()=>{state.time=0.13;draw();});
+$('standingCaptureBtn')?.addEventListener('click',()=>{state.logs.push(row());renderTable();});
+$('standingDownloadBtn')?.addEventListener('click',downloadCSV);
+$('standingPngBtn')?.addEventListener('click',savePNG);
+$('standingClearBtn')?.addEventListener('click',()=>{state.logs=[];renderTable();});
+window.addEventListener('resize',draw,{passive:true});
+draw();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

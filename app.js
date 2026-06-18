@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-/* v5.219 beats smooth sine */
+/* v5.223 standing wave physics design */
 const rebuiltTopicModes = new Set(["soundReflection","soundRefraction","soundDiffraction","soundInterference","superposition","beatsViz","standingAir","resonanceViz","resonanceAirHarmonics","dopplerViz","shockWave","soundIntensity","soundIntensityLevel","soundLevelHearing","harmonicsViz","noisePollution","applicationsSound"]);
 const soundTopicModes = rebuiltTopicModes;
 
