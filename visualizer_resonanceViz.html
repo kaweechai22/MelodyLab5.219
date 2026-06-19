@@ -1,71 +1,393 @@
-<!DOCTYPE html><html lang="th"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>MelodyLab v5.116 - Resonance in Air Column (การสั่นพ้องของอากาศในท่อ)</title><meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ"><meta name="theme-color" content="#0f172a"><link rel="manifest" href="manifest.json"><link rel="icon" type="image/png" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><link rel="stylesheet" href="style.css"><meta name="melodylab-build-version" content="v5.116-clean-release"></head><body class="detailPage page-visualizer"><header><div class="wrap nav detailNav"><button class="backBtn" onclick="location.href='visualizer.html'">←</button><a class="brand" href="index.html"><img src="icon-192.png" alt="MelodyLab"><span>Resonance in Air Column (การสั่นพ้องของอากาศในท่อ)</span></a></div></header>
-<main class="wrap detailMain" data-current="visualizer">
-<section class="section activeDetail visualizerSinglePage visualizerTemplatePage longitudinalFocusPage rebuiltTopicPage" id="visualizer" data-viz-mode="resonanceViz">
-  <div class="sectionHead templateHead">
-    <div><h2>Resonance in Air Column (การสั่นพ้องของอากาศในท่อ)</h2><p class="sectionLead">อากาศในท่อสั่นพ้องเมื่อความถี่ตรงกับโหมดธรรมชาติ</p></div>
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MelodyLab v5.235 - Air Column Resonance: Response Curve (การสั่นพ้องของอากาศในท่อ: กราฟตอบสนอง)</title>
+  <meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ">
+  <meta name="theme-color" content="#0f172a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="style.css">
+  <meta name="melodylab-build-version" content="v5.235-rename-air-column-topics">
+  <style>
+    .resonancePage .versionBadge{display:inline-flex;margin-top:10px;padding:8px 14px;border-radius:999px;background:rgba(16,185,129,.14);border:1px solid rgba(52,211,153,.35);color:#bbf7d0;font-weight:900}
+    .resCanvas{display:block;width:100% !important;height:min(66vh,560px) !important;min-height:450px !important;max-height:560px !important;aspect-ratio:auto !important}
+    .resReadout{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:12px}
+    .resReadout>div{background:rgba(15,23,42,.66);border:1px solid rgba(148,163,184,.18);border-radius:16px;padding:10px 12px}
+    .resReadout label{display:block;font-size:.74rem;color:#9fb0c7;font-weight:800}
+    .resReadout b{font-size:1.02rem;color:#f8fafc}
+    .freqIcon{background:linear-gradient(135deg,#f59e0b,#f97316)}
+    .lengthIcon{background:linear-gradient(135deg,#0ea5e9,#22d3ee)}
+    .speedIcon{background:linear-gradient(135deg,#22c55e,#86efac)}
+    .modeIcon{background:linear-gradient(135deg,#8b5cf6,#c084fc)}
+    .qIcon{background:linear-gradient(135deg,#ef4444,#f97316)}
+    .timeIcon{background:linear-gradient(135deg,#6366f1,#a78bfa)}
+    .resLegend .legendLine{width:36px;height:4px;border-radius:999px;display:inline-block}
+    .resLegend .respLine{background:#f59e0b;box-shadow:0 0 10px rgba(245,158,11,.45)}
+    .resLegend .driveLine{background:#22d3ee;box-shadow:0 0 10px rgba(34,211,238,.45)}
+    .resLegend .tubeLine{background:#38bdf8;box-shadow:0 0 10px rgba(56,189,248,.45)}
+    .resLegend .peakDot{width:12px;height:12px;border-radius:999px;background:#22c55e;display:inline-block}
+    @media(max-width:760px){
+      .resCanvas{height:min(64vh,530px) !important;min-height:430px !important;max-height:530px !important}
+      .resReadout{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+      .resReadout>div:last-child{grid-column:1/-1}
+      .resReadout>div{padding:9px 10px}
+    }
+  </style>
+</head>
+<body class="detailPage page-visualizer">
+<header>
+  <div class="wrap nav detailNav">
+    <button class="backBtn" onclick="location.href='visualizer.html'">←</button>
+    <a class="brand" href="index.html"><img src="icon-192.png" alt="MelodyLab"><span>Air Column Resonance: Response Curve (การสั่นพ้องของอากาศในท่อ: กราฟตอบสนอง)</span></a>
   </div>
+</header>
+
+<main class="wrap detailMain" data-current="visualizer">
+<section class="section activeDetail visualizerSinglePage visualizerTemplatePage longitudinalFocusPage rebuiltTopicPage resonancePage" id="visualizer" data-viz-mode="resonanceViz">
+  <div class="sectionHead templateHead">
+    <div>
+      <h2>12. Air Column Resonance: Response Curve (การสั่นพ้องของอากาศในท่อ: กราฟตอบสนอง)</h2>
+      <p class="sectionLead">ปรับความถี่กระตุ้นแล้วดูยอดพ้องและการตอบสนองของอากาศในท่อ</p>
+      <span class="versionBadge">v5.235 • Response Curve</span>
+    </div>
+  </div>
+
   <div class="visualizerTemplateGrid longitudinalFocusGrid">
     <div class="card mainViz templateMainViz longitudinalMainViz">
       <div class="vizMediaFrame">
-        <div class="vizSingleModeLabel"><span>🔊</span> Resonance in Air Column (การสั่นพ้องของอากาศในท่อ)</div>
-        <canvas id="visualizerCanvas" width="1200" height="440"></canvas>
+        <div class="vizSingleModeLabel"><span>🔊</span> Air Column Resonance: Response Curve</div>
+        <canvas id="resCanvas" class="resCanvas" width="1200" height="540" aria-label="ภาพจำลองการสั่นพ้องของอากาศในท่อ"></canvas>
         <div class="vizPlayerBar embeddedPlayerBar" aria-label="ปุ่มควบคุมภาพจำลอง">
           <div class="playerCluster playerCenter playerCenterOnly">
-            <button id="vizPlayBtn" class="playerBtn playerPrimary playerPlay" title="เล่น" aria-label="เล่น"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6.5v11l9-5.5-9-5.5z"/></svg></span></button>
-            <button id="vizPauseBtn" class="playerBtn playerPause" title="หยุด" aria-label="หยุด"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="3.5" height="12" rx="1.2"/><rect x="13.5" y="6" width="3.5" height="12" rx="1.2"/></svg></span></button>
-            <button id="vizResetBtn" class="playerBtn playerReset" title="รีเซ็ต" aria-label="รีเซ็ต"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19 5v5h-5"/></svg></span></button>
+            <button id="resPlayBtn" class="playerBtn playerPrimary playerPlay" title="เล่น" aria-label="เล่น"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6.5v11l9-5.5-9-5.5z"/></svg></span></button>
+            <button id="resPauseBtn" class="playerBtn playerPause" title="หยุด" aria-label="หยุด"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="7" y="6" width="3.5" height="12" rx="1.2"/><rect x="13.5" y="6" width="3.5" height="12" rx="1.2"/></svg></span></button>
+            <button id="resResetBtn" class="playerBtn playerReset" title="รีเซ็ต" aria-label="รีเซ็ต"><span class="playerGlyph" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 12a7 7 0 1 1-2.05-4.95"/><path d="M19 5v5h-5"/></svg></span></button>
           </div>
         </div>
       </div>
-      <details class="explainDetails"><summary>คำอธิบายเพิ่มเติม</summary>
-        <div class="detailsBody"><div class="templateUnderCanvas explainGrid">
-          <div class="templateInsightCard"><div class="insightTitle">สิ่งที่สังเกตได้</div><ul>
-                <li>กราฟ amplitude response สูงเมื่อ f ใกล้ fₙ โดยท่อเปิดใช้ fₙ = nv/2L และท่อปิดใช้ fₙ = (2n−1)v/4L</li>
-                <li>ท่อปิดหนึ่งด้านมีฮาร์มอนิกคี่ในแบบพื้นฐาน</li>
-                <li>ท่อเปิดสองด้านเกิดโหมดเต็มจำนวน</li>
-          </ul></div>
-          <div class="templateLegendCard">
-            <div class="legendRow"><span class="legendDot cyan"></span><span>แนวคลื่น/รังสีเสียง</span></div>
-            <div class="legendRow"><span class="legendDot red"></span><span>จุดสังเกตหรือค่าที่กำลังพิจารณา</span></div>
-            <div class="legendRow"><span class="legendMark">→</span><span>ทิศทางการเคลื่อนที่ของเสียง</span></div>
+
+      <div class="resReadout templateReadout" aria-label="ค่าที่อ่านได้">
+        <div><label>ความถี่กระตุ้น f</label><b id="readDrive">--</b></div>
+        <div><label>ความถี่พ้องใกล้สุด</label><b id="readNearest">--</b></div>
+        <div><label>การตอบสนอง</label><b id="readAmp">--</b></div>
+        <div><label>ชนิดท่อ</label><b id="readTube">--</b></div>
+        <div><label>สถานะ</label><b id="readState">--</b></div>
+      </div>
+
+      <details class="explainDetails" open>
+        <summary>สรุปหลักฟิสิกส์</summary>
+        <div class="detailsBody">
+          <div class="templateUnderCanvas explainGrid">
+            <div class="templateInsightCard">
+              <div class="insightTitle">สรุป</div>
+              <ul>
+                <li>ท่อเปิด–เปิด: เกิดได้ทุกฮาร์มอนิก</li>
+                <li>ท่อปิด–เปิด: เกิดเด่นที่ฮาร์มอนิกคี่</li>
+                <li>ยิ่ง f ใกล้ fₙ การตอบสนองของอากาศในท่อยิ่งสูง</li>
+                <li>ค่า Q สูงทำให้ยอดพ้องแคบและเด่นขึ้น</li>
+              </ul>
+            </div>
+            <div class="templateLegendCard resLegend">
+              <div class="legendRow"><span class="legendLine tubeLine"></span><span>ภาพบน = คลื่นนิ่งในท่อ ณ ความถี่ที่กระตุ้น</span></div>
+              <div class="legendRow"><span class="legendLine respLine"></span><span>กราฟล่าง = การตอบสนองของท่อ</span></div>
+              <div class="legendRow"><span class="legendLine driveLine"></span><span>เส้นตั้ง = ความถี่กระตุ้นปัจจุบัน</span></div>
+              <div class="legendRow"><span class="peakDot"></span><span>ยอดพ้อง fₙ</span></div>
+            </div>
           </div>
-        </div></div>
+        </div>
       </details>
     </div>
+
     <div class="card controlViz templateControlViz longitudinalControlViz neonControlViz">
-      <div class="panelTitleStack"><h3>Parameters (ตัวแปรควบคุม)</h3><p class="panelSubtext">ปรับค่าแล้วสังเกตการเปลี่ยนแปลงของภาพจำลอง</p></div>
+      <div class="panelTitleStack"><h3>Parameters (ตัวแปรควบคุม)</h3><p class="panelSubtext">ปรับความถี่และท่อเพื่อดูจุดสั่นพ้อง</p></div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">f</div>
-        <div class="paramText"><label>ความถี่กระตุ้น</label><small>Driving frequency f</small></div>
-        <input id="vizFreq" type="range" min="100" max="1200" step="5" value="440">
-        <div class="paramValueWrap"><span id="vizFreqLabel" class="valueBadge">440 Hz</span></div>
+        <div class="paramIcon freqIcon">f</div>
+        <div class="paramText"><label>ความถี่กระตุ้น</label><small>Driving frequency</small></div>
+        <input id="resFreq" type="range" min="50" max="1500" step="5" value="430">
+        <div class="paramValueWrap"><span id="freqLabel" class="valueBadge">430 Hz</span></div>
       </div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">L</div>
-        <div class="paramText"><label>ความยาวท่อ</label><small>Tube length L</small></div>
-        <input id="vizLength" type="range" min="0.2" max="2.0" step="0.05" value="0.8">
-        <div class="paramValueWrap"><span id="vizLengthLabel" class="valueBadge">0.80 m</span></div>
+        <div class="paramIcon lengthIcon">L</div>
+        <div class="paramText"><label>ความยาวท่อ</label><small>Tube length</small></div>
+        <input id="resLength" type="range" min="0.20" max="2.00" step="0.05" value="0.80">
+        <div class="paramValueWrap"><span id="lengthLabel" class="valueBadge">0.80 m</span></div>
       </div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">▣</div>
+        <div class="paramIcon speedIcon">v</div>
+        <div class="paramText"><label>อัตราเร็วเสียง</label><small>Sound speed</small></div>
+        <input id="resSpeed" type="range" min="300" max="380" step="1" value="343">
+        <div class="paramValueWrap"><span id="speedLabel" class="valueBadge">343 m/s</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon modeIcon">▣</div>
         <div class="paramText"><label>ชนิดท่อ</label><small>Tube type</small></div>
-        <select id="vizSubMode">
-          <option value="open">open-open</option>
-          <option value="closed" selected>closed-open</option>
+        <select id="resTube">
+          <option value="closed" selected>ท่อปิด–เปิด</option>
+          <option value="open">ท่อเปิด–เปิด</option>
         </select>
-        <div class="paramValueWrap"><span id="vizSubModeLabel" class="valueBadge">closed</span></div>
+        <div class="paramValueWrap"><span id="tubeLabel" class="valueBadge">ปิด–เปิด</span></div>
       </div>
+
       <div class="field richField neonParamRow">
-        <div class="paramIcon">◷</div>
-        <div class="paramText"><label>อัตราเวลา</label><small>Time Speed</small></div>
-        <input id="vizTimeSpeed" type="range" min="0.10" max="3.0" step="0.10" value="1.0">
-        <div class="paramValueWrap"><span id="vizTimeLabel" class="valueBadge">1.0×</span></div>
+        <div class="paramIcon qIcon">Q</div>
+        <div class="paramText"><label>ความคมของสั่นพ้อง</label><small>Resonance sharpness</small></div>
+        <input id="resQ" type="range" min="6" max="70" step="1" value="24">
+        <div class="paramValueWrap"><span id="qLabel" class="valueBadge">24</span></div>
+      </div>
+
+      <div class="field richField neonParamRow">
+        <div class="paramIcon timeIcon">◷</div>
+        <div class="paramText"><label>ความเร็วแอนิเมชัน</label><small>Animation speed</small></div>
+        <input id="resTimeSpeed" type="range" min="0.10" max="2.00" step="0.10" value="0.80">
+        <div class="paramValueWrap"><span id="timeLabel" class="valueBadge">0.8×</span></div>
       </div>
     </div>
   </div>
-  <div class="card localExportCard templateExportCard" data-export-name="resonanceViz">
-    <div class="panelTitleStack"><h3>ส่งออกข้อมูล</h3><p class="panelSubtext">บันทึกค่าพารามิเตอร์และภาพจำลองจากหน้านี้</p></div>
-    <div class="actions"><button class="secondary localCaptureBtn">บันทึกค่าปัจจุบัน</button><button class="secondary localDownloadBtn">ดาวน์โหลด CSV</button><button id="vizExportBtn" class="secondary localPngBtn">บันทึกภาพ PNG</button><button class="secondary localClearBtn">ล้างข้อมูลหน้านี้</button></div>
-    <div class="tableWrap localLogWrap"><table><thead><tr class="localHead"></tr></thead><tbody class="localBody"></tbody></table></div>
+
+  <div class="card localExportCard templateExportCard" data-export-name="airColumnResonance">
+    <div class="panelTitleStack"><h3>ส่งออกข้อมูล</h3><p class="panelSubtext">บันทึกค่าพารามิเตอร์และผลการตอบสนอง</p></div>
+    <div class="actions">
+      <button id="resCaptureBtn" class="secondary localCaptureBtn">บันทึกค่าปัจจุบัน</button>
+      <button id="resDownloadBtn" class="secondary localDownloadBtn">ดาวน์โหลด CSV</button>
+      <button id="resPngBtn" class="secondary localPngBtn">บันทึกภาพ PNG</button>
+      <button id="resClearBtn" class="secondary localClearBtn">ล้างข้อมูลหน้านี้</button>
+    </div>
+    <div class="tableWrap localLogWrap"><table><thead><tr id="resHead"></tr></thead><tbody id="resBody"></tbody></table></div>
   </div>
-</section></main><script src="app.js"></script></body></html>
+</section>
+</main>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const state = {running:true,last:performance.now(),time:0.10,logs:[]};
+
+function fmt(v,d=2){const s=Number(v).toFixed(d);return d===0?s:s.replace(/\.?0+$/,'');}
+function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
+
+function params(){
+  const f=Number($('resFreq')?.value || 430);
+  const L=Number($('resLength')?.value || 0.80);
+  const v=Number($('resSpeed')?.value || 343);
+  const tube=$('resTube')?.value || 'closed';
+  const Q=Number($('resQ')?.value || 24);
+  const timeSpeed=Number($('resTimeSpeed')?.value || 0.80);
+  const modes=buildModes(tube,L,v,6);
+  const response=modes.map(m=>({mode:m,amp:ampFor(f,m.freq,Q)}));
+  response.sort((a,b)=>b.amp-a.amp);
+  const best=response[0];
+  const amp=best?best.amp:0;
+  const status=amp>=0.72?'สั่นพ้องชัด':(amp>=0.38?'ใกล้สั่นพ้อง':'ยังไม่พ้อง');
+  return {f,L,v,tube,Q,timeSpeed,modes,best,amp,status};
+}
+function buildModes(tube,L,v,count){
+  const modes=[];
+  for(let n=1;n<=count;n++){
+    const harmonic=tube==='closed' ? (2*n-1) : n;
+    const freq=tube==='closed' ? harmonic*v/(4*L) : harmonic*v/(2*L);
+    const lambda=tube==='closed' ? 4*L/harmonic : 2*L/harmonic;
+    const label=tube==='closed' ? `ลำดับ ${n} (ฮาร์มอนิก ${harmonic})` : `n = ${n}`;
+    modes.push({n,harmonic,freq,lambda,label});
+  }
+  return modes;
+}
+function ampFor(f,fn,Q){
+  const bw=Math.max(8,fn/Q);
+  const x=(f-fn)/bw;
+  return 1/(1+x*x);
+}
+function canvasScale(canvas){
+  const dpr=Math.max(1,window.devicePixelRatio||1);
+  const rect=canvas.getBoundingClientRect();
+  const cssW=Math.max(320,Math.round(rect.width||720));
+  const cssH=Math.max(360,Math.round(rect.height||450));
+  const targetW=Math.round(cssW*dpr), targetH=Math.round(cssH*dpr);
+  if(canvas.width!==targetW||canvas.height!==targetH){canvas.width=targetW;canvas.height=targetH;}
+  const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);
+  return {w:cssW,h:cssH,dpr};
+}
+function rr(ctx,x,y,w,h,r,fill,stroke){
+  const q=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+q,y);ctx.arcTo(x+w,y,x+w,y+h,q);ctx.arcTo(x+w,y+h,x,y+h,q);ctx.arcTo(x,y+h,x,y,q);ctx.arcTo(x,y,x+w,y,q);ctx.closePath();if(fill)ctx.fill();if(stroke)ctx.stroke();
+}
+function background(ctx,w,h){
+  const g=ctx.createLinearGradient(0,0,w,h);g.addColorStop(0,'#071426');g.addColorStop(.55,'#101338');g.addColorStop(1,'#1d1238');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='rgba(56,189,248,.10)';ctx.lineWidth=1;
+  for(let x=0;x<w;x+=48){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+  for(let y=0;y<h;y+=48){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+}
+function line(ctx,pts,color,lw=2,alpha=1,dash=null){
+  ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.lineJoin='round';ctx.lineCap='round';if(dash)ctx.setLineDash(dash);ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.restore();
+}
+function dot(ctx,x,y,r,color,label,above=true){
+  ctx.save();ctx.fillStyle=color;ctx.strokeStyle='rgba(255,255,255,.90)';ctx.lineWidth=1.2;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill();ctx.stroke();
+  if(label){ctx.fillStyle='rgba(226,232,240,.94)';ctx.font='800 9px system-ui,sans-serif';ctx.textAlign='center';ctx.fillText(label,x,y+(above?-10:15));}
+  ctx.restore();
+}
+function updateLabels(){
+  const p=params();
+  $('freqLabel').textContent=`${fmt(p.f,0)} Hz`;
+  $('lengthLabel').textContent=`${fmt(p.L,2)} m`;
+  $('speedLabel').textContent=`${fmt(p.v,0)} m/s`;
+  $('tubeLabel').textContent=p.tube==='closed'?'ปิด–เปิด':'เปิด–เปิด';
+  $('qLabel').textContent=fmt(p.Q,0);
+  $('timeLabel').textContent=`${fmt(p.timeSpeed,1)}×`;
+  $('readDrive').textContent=`${fmt(p.f,0)} Hz`;
+  $('readNearest').textContent=p.best?`${fmt(p.best.mode.freq,1)} Hz`:'--';
+  $('readAmp').textContent=`${fmt(p.amp*100,0)}%`;
+  $('readTube').textContent=p.tube==='closed'?'ท่อปิด–เปิด':'ท่อเปิด–เปิด';
+  $('readState').textContent=p.status;
+}
+function displacementShape(p,u,mode){
+  if(p.tube==='open') return Math.cos(mode.harmonic*Math.PI*u);
+  return Math.sin(mode.harmonic*Math.PI*u/2);
+}
+function pressureShape(p,u,mode){
+  if(p.tube==='open') return Math.sin(mode.harmonic*Math.PI*u);
+  return Math.cos(mode.harmonic*Math.PI*u/2);
+}
+function drawTube(ctx,left,right,y,amp,p,mode,timePhase){
+  const W=right-left, tubeTop=y-amp-30, tubeH=2*amp+60;
+  ctx.save();
+  const grad=ctx.createLinearGradient(left,tubeTop,right,tubeTop+tubeH);
+  grad.addColorStop(0,'rgba(14,165,233,.10)');
+  grad.addColorStop(.5,'rgba(148,163,184,.12)');
+  grad.addColorStop(1,'rgba(14,165,233,.08)');
+  ctx.fillStyle=grad;ctx.strokeStyle='rgba(125,211,252,.34)';ctx.lineWidth=2;
+  rr(ctx,left,tubeTop,W,tubeH,Math.min(24,tubeH/2),true,true);
+
+  const openEnd=x=>{ctx.strokeStyle='rgba(34,211,238,.82)';ctx.lineWidth=4;ctx.beginPath();ctx.ellipse(x,y,tubeH*.18,tubeH*.43,0,0,Math.PI*2);ctx.stroke();ctx.fillStyle='rgba(186,230,253,.70)';ctx.font='800 9px system-ui,sans-serif';ctx.textAlign='center';ctx.fillText('ปลายเปิด',x,y+tubeH*.54);};
+  const closedEnd=x=>{ctx.strokeStyle='rgba(248,113,113,.86)';ctx.lineWidth=5;ctx.beginPath();ctx.moveTo(x,y-tubeH*.42);ctx.lineTo(x,y+tubeH*.42);ctx.stroke();ctx.lineWidth=1.2;for(let yy=y-tubeH*.40;yy<y+tubeH*.40;yy+=9){ctx.beginPath();ctx.moveTo(x-12,yy+10);ctx.lineTo(x,yy);ctx.stroke();}ctx.fillStyle='rgba(254,202,202,.70)';ctx.font='800 9px system-ui,sans-serif';ctx.textAlign='center';ctx.fillText('ปลายปิด',x,y+tubeH*.54);};
+  if(p.tube==='closed'){closedEnd(left);openEnd(right);}else{openEnd(left);openEnd(right);}
+
+  // pressure color band and particles
+  for(let i=0;i<=W;i+=4){
+    const u=i/W, pr=pressureShape(p,u,mode)*Math.sin(timePhase)*p.amp;
+    const a=Math.min(.45,Math.abs(pr)*.34);
+    if(a>.01){ctx.fillStyle=pr>=0?`rgba(248,113,113,${a})`:`rgba(96,165,250,${a})`;ctx.fillRect(left+i,tubeTop+4,4,tubeH-8);}
+  }
+
+  const rows=4, count=28;
+  for(let r=0;r<rows;r++){
+    for(let i=0;i<count;i++){
+      const u=(i+.5)/count;
+      const pr=pressureShape(p,u,mode)*Math.sin(timePhase)*p.amp;
+      const d=displacementShape(p,u,mode)*Math.cos(timePhase)*p.amp;
+      const x=left+(clamp(u+0.018*d,0.02,0.98))*W + ((((i+1)*17+(r+1)*23)%100)/100-.5)*2;
+      const yy=y+(r-(rows-1)/2)*10 + ((((i+1)*29+(r+1)*13)%100)/100-.5)*3;
+      const rad=1.8+0.4*Math.abs(pr);
+      const tint=pr>=0?'250,204,21':'191,219,254';
+      ctx.fillStyle=`rgba(${tint},${0.48+0.20*Math.abs(pr)})`;
+      ctx.beginPath();ctx.arc(x,yy,rad,0,Math.PI*2);ctx.fill();
+    }
+  }
+
+  // standing wave pressure curve
+  const pts=[];
+  for(let i=0;i<=W;i+=2){
+    const u=i/W;
+    pts.push([left+i,y-pressureShape(p,u,mode)*Math.sin(timePhase)*amp*p.amp]);
+  }
+  line(ctx,pts,'#f59e0b',3,.96);
+
+  // concise labels
+  ctx.fillStyle='rgba(15,23,42,.78)';ctx.strokeStyle='rgba(148,163,184,.16)';rr(ctx,18,18,Math.min(315,ctx.canvas.width-36),48,14,true,true);
+  ctx.fillStyle='rgba(226,232,240,.96)';ctx.font='900 12px system-ui,sans-serif';ctx.fillText(`${p.status} • ${mode.label}`,34,38);
+  ctx.fillStyle='rgba(148,163,184,.96)';ctx.font='800 10px system-ui,sans-serif';ctx.fillText(`f = ${fmt(p.f,0)} Hz, fₙ = ${fmt(mode.freq,1)} Hz, A = ${fmt(p.amp*100,0)}%`,34,56);
+  ctx.restore();
+}
+function drawResponse(ctx,x,y,w,h,p){
+  ctx.save();
+  ctx.fillStyle='rgba(15,23,42,.56)';ctx.strokeStyle='rgba(148,163,184,.18)';rr(ctx,x,y,w,h,16,true,true);
+  const fMin=50, fMax=1500;
+  const sx=f=>x+(f-fMin)/(fMax-fMin)*w;
+  const sy=a=>y+h-20-a*(h-44);
+  ctx.strokeStyle='rgba(148,163,184,.28)';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x+8,y+h-20);ctx.lineTo(x+w-8,y+h-20);ctx.stroke();
+  ctx.fillStyle='rgba(203,213,225,.90)';ctx.font='900 11px system-ui,sans-serif';ctx.fillText('กราฟการตอบสนองของท่อ',x+14,y+22);
+
+  // response curve
+  const pts=[];
+  for(let f=fMin;f<=fMax;f+=5){
+    let a=0;
+    p.modes.forEach(m=>{a=Math.max(a,ampFor(f,m.freq,p.Q));});
+    pts.push([sx(f),sy(a)]);
+  }
+  line(ctx,pts,'#f59e0b',2.8,.95);
+
+  // peaks
+  p.modes.forEach(m=>{
+    if(m.freq<fMin||m.freq>fMax) return;
+    const px=sx(m.freq), py=sy(1);
+    ctx.strokeStyle='rgba(34,197,94,.28)';ctx.setLineDash([4,5]);ctx.beginPath();ctx.moveTo(px,y+34);ctx.lineTo(px,y+h-18);ctx.stroke();ctx.setLineDash([]);
+    dot(ctx,px,py,4.5,'#22c55e',`f${m.n}`,true);
+  });
+
+  // driving frequency
+  const dx=sx(clamp(p.f,fMin,fMax));
+  ctx.strokeStyle='rgba(34,211,238,.95)';ctx.lineWidth=2.2;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(dx,y+30);ctx.lineTo(dx,y+h-18);ctx.stroke();ctx.setLineDash([]);
+  dot(ctx,dx,sy(p.amp),5,'#22d3ee','f',false);
+
+  ctx.fillStyle='rgba(148,163,184,.94)';ctx.font='800 10px system-ui,sans-serif';ctx.textAlign='left';
+  ctx.fillText(`${fMin} Hz`,x+10,y+h-6);ctx.textAlign='right';ctx.fillText(`${fMax} Hz`,x+w-10,y+h-6);
+  ctx.restore();
+}
+function draw(){
+  const canvas=$('resCanvas');if(!canvas)return;
+  const {w,h}=canvasScale(canvas),ctx=canvas.getContext('2d');background(ctx,w,h);
+  const p=params();updateLabels();
+  const left=Math.max(56,Math.round(w*0.12));
+  const maxRight=w-Math.max(38,Math.round(w*0.07));
+  const maxPlot=maxRight-left;
+  const lengthScale=0.45+0.55*clamp((p.L-0.20)/(2.00-0.20),0,1);
+  const right=left+maxPlot*lengthScale;
+  const tubeY=Math.round(h*0.30), tubeAmp=Math.min(42,h*0.085);
+  const best=p.best?p.best.mode:p.modes[0];
+  drawTube(ctx,left,right,tubeY,tubeAmp,p,best,2*Math.PI*state.time);
+  drawResponse(ctx,26,Math.round(h*0.57),w-52,Math.round(h*0.34),p);
+}
+function row(){
+  const p=params();
+  const b=p.best?p.best.mode:null;
+  return {timestamp:new Date().toISOString(),topic:'Air Column Resonance',tube:p.tube==='closed'?'closed-open':'open-open',drive_frequency_Hz:Number(fmt(p.f,1)),tube_length_m:Number(fmt(p.L,2)),sound_speed_mps:Number(fmt(p.v,0)),Q:p.Q,nearest_mode:b?b.label:'',nearest_frequency_Hz:b?Number(fmt(b.freq,2)):'',response_percent:Number(fmt(p.amp*100,1)),status:p.status};
+}
+function renderTable(){
+  const head=$('resHead'),body=$('resBody');if(!head||!body)return;
+  const keys=['timestamp','tube','drive_frequency_Hz','tube_length_m','sound_speed_mps','Q','nearest_mode','nearest_frequency_Hz','response_percent','status'];
+  head.innerHTML=keys.map(k=>`<th>${k}</th>`).join('');
+  body.innerHTML=state.logs.map(r=>`<tr>${keys.map(k=>`<td>${r[k]??''}</td>`).join('')}</tr>`).join('');
+}
+function downloadCSV(){
+  if(!state.logs.length) state.logs.push(row());
+  const keys=Object.keys(state.logs[0]);
+  const csv=[keys.join(','),...state.logs.map(r=>keys.map(k=>JSON.stringify(r[k]??'')).join(','))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='melodylab_air_column_resonance.csv';a.click();URL.revokeObjectURL(a.href);renderTable();
+}
+function savePNG(){const canvas=$('resCanvas');if(!canvas)return;const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='melodylab_air_column_resonance.png';a.click();}
+function tick(now){
+  const dt=Math.min(.05,(now-state.last)/1000);state.last=now;
+  const p=params();
+  const fFactor=clamp(p.f/430,0.35,2.50);
+  if(state.running) state.time += dt*p.timeSpeed*0.22*fFactor;
+  draw();requestAnimationFrame(tick);
+}
+['resFreq','resLength','resSpeed','resTube','resQ','resTimeSpeed'].forEach(id=>{$(id)?.addEventListener('input',draw);$(id)?.addEventListener('change',draw);});
+$('resPlayBtn')?.addEventListener('click',()=>{state.running=true;});
+$('resPauseBtn')?.addEventListener('click',()=>{state.running=false;});
+$('resResetBtn')?.addEventListener('click',()=>{state.time=0.10;draw();});
+$('resCaptureBtn')?.addEventListener('click',()=>{state.logs.push(row());renderTable();});
+$('resDownloadBtn')?.addEventListener('click',downloadCSV);
+$('resPngBtn')?.addEventListener('click',savePNG);
+$('resClearBtn')?.addEventListener('click',()=>{state.logs=[];renderTable();});
+window.addEventListener('resize',draw,{passive:true});
+draw();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>

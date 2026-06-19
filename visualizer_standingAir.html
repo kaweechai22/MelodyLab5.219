@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MelodyLab v5.232 - Standing Wave (คลื่นนิ่งของเสียง)</title>
+  <title>MelodyLab v5.233 - Standing Wave (คลื่นนิ่งของเสียง)</title>
   <meta name="description" content="MelodyLab ห้องทดลองเสียงและเก็บข้อมูล ด้วยมือถือ">
   <meta name="theme-color" content="#0f172a">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="icon-192.png">
   <link rel="apple-touch-icon" href="icon-192.png">
   <link rel="stylesheet" href="style.css">
-  <meta name="melodylab-build-version" content="v5.232-standing-wave-decluttered">
+  <meta name="melodylab-build-version" content="v5.233-standing-wave-runtime-checked">
   <style>
     .standingWavePage .versionBadge{display:inline-flex;margin-top:10px;padding:8px 14px;border-radius:999px;background:rgba(16,185,129,.14);border:1px solid rgba(52,211,153,.35);color:#bbf7d0;font-weight:900}
     .standingCanvas{display:block;width:100% !important;height:min(66vh,560px) !important;min-height:450px !important;max-height:560px !important;aspect-ratio:auto !important}
@@ -54,7 +54,7 @@
     <div>
       <h2>11. Standing Wave (คลื่นนิ่งของเสียง)</h2>
       <p class="sectionLead">คลื่นนิ่งของเสียงในท่อ: <b>การกระจัด</b> และ <b>ความดันเสียง</b> มีบัพ/ปฏิบัพสลับตำแหน่งกัน</p>
-      <span class="versionBadge">v5.232 • Decluttered display</span>
+      <span class="versionBadge">v5.233 • Runtime checked</span>
     </div>
   </div>
 
@@ -170,7 +170,7 @@
 'use strict';
 const $ = id => document.getElementById(id);
 const state = {running:true,last:performance.now(),time:0.13,logs:[]};
-function fmt(v,d=2){return Number(v).toFixed(d).replace(/\.?0+$/,'');}
+function fmt(v,d=2){const s=Number(v).toFixed(d);return d===0?s:s.replace(/\.?0+$/,'');}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
 function params(){
   const boundary=$('standingBoundary')?.value || 'open';
